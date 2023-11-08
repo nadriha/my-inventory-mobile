@@ -90,10 +90,10 @@
             );
         }
         ```
-*    Membuat tiga tombol sederhana dengan ikon dan teks untuk: Melihat daftar item (Lihat Item), Menambah item (Tambah Item), Logout (Logout)  
-    -   Membuat class untuk tombol.
+*   Membuat tiga tombol sederhana dengan ikon dan teks untuk: Melihat daftar item (Lihat Item), Menambah item (Tambah Item), Logout (Logout)  
+    -   Membuat class untuk tombol.  
         Class tersebut mempunyai atribut untuk menampung ikon dan teks pada tombol 
-        ```
+        ```ruby
         class InventoryItem {
         final String name;
         final IconData icon;
