@@ -111,7 +111,7 @@
             InventoryItem("Logout", Icons.logout, Colors.lightGreen.shade700),
         ];
         ```
-    -   Memunculkan tombol pada tampilan layar dengan menggunakan GridView pada Widget build di MyHomePage
+    -   Memunculkan tombol pada tampilan layar dengan menggunakan GridView pada Widget build di MyHomePage dan menghubungkan dengan widget InventoryCard
         ```ruby
         GridView.count(
             // Container pada card kita.
