@@ -170,7 +170,7 @@
         }
         }
         ```
-    -   Menambahkan widget SnackBar pada tobol agar memunculkan tulisan yang diinginkan
+    -   Menambahkan event onTap dan widget SnackBar pada tombol agar memunculkan tulisan yang diinginkan
         ```ruby
         onTap: () {
         // Memunculkan SnackBar ketika diklik
