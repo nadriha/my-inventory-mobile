@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:my_inventory/inventorylist_form.dart';
+import 'package:my_inventory/screens/inventorylist_form.dart';
 // Impor drawer widget
 import 'package:my_inventory/widgets/left_drawer.dart';
+import 'package:my_inventory/inventory_card.dart';
 
 
 class MyHomePage extends StatelessWidget {
@@ -67,65 +68,6 @@ class MyHomePage extends StatelessWidget {
                 }).toList(),
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class InventoryItem {
-  final String name;
-  final IconData icon;
-  final Color color;
-
-  InventoryItem(this.name, this.icon, this.color);
-}
-
-class InventoryCard extends StatelessWidget {
-  final InventoryItem item;
-
-  const InventoryCard(this.item, {super.key}); // Constructor
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: item.color,
-      child: InkWell(
-        // Area responsive terhadap sentuhan
-        onTap: () {
-          // Memunculkan SnackBar ketika diklik
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(
-                content: Text("Kamu telah menekan tombol ${item.name}!")));
-
-          // Navigate ke route yang sesuai (tergantung jenis tombol)
-          if (item.name == "Tambah Item") {
-            Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const InventoryFormPage()));
-          }
-        },
-        child: Container(
-          // Container untuk menyimpan Icon dan Text
-          padding: const EdgeInsets.all(8),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  item.icon,
-                  color: Colors.white,
-                  size: 30.0,
-                ),
-                const Padding(padding: EdgeInsets.all(3)),
-                Text(
-                  item.name,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
           ),
         ),
       ),

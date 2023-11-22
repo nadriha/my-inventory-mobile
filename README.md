@@ -1,4 +1,13 @@
 <details>
+<summary>Tugas 9</summary>
+
+#### Integrasi Layanan Web Django dengan Aplikasi Flutter
+**Apakah bisa kita melakukan pengambilan data JSON tanpa membuat model terlebih dahulu? Jika iya, apakah hal tersebut lebih baik daripada membuat model sebelum melakukan pengambilan data JSON?**  
+Bisa, kita dapat melakukan pengambilan data JSON dengan menggunakan sebuah variabel yang menyimpan sebuah dictionary berisi data. Pada hal ini biasanya melibatkan penggunaan `jsonDecode` dari `dart:convert` untuk mengubah data JSON menjadi struktur data Dart (seperti `Map` atau `List`). Akan tetapi, pengambilan data JSON tanpa membuat model terlebih dahulu tidak lebih baik dari membuat model terlebih dahulu karena hal ini membuat aplikasi lebih rentan terhadap kesalahan karena tidak adanya pemeriksaan tipe pada saat kompilasi, meningkatkan potensi kesalahan runtime dan kurang tersturktur sehingga sulit untuk memastikan konsistensi data, terutama saat mengembangkan aplikasi.
+
+</details>
+
+<details>
 <summary>Tugas 8</summary>
 
 #### Flutter Navigation, Layouts, Forms, and Input Elements
