@@ -5,6 +5,119 @@
 **Apakah bisa kita melakukan pengambilan data JSON tanpa membuat model terlebih dahulu? Jika iya, apakah hal tersebut lebih baik daripada membuat model sebelum melakukan pengambilan data JSON?**  
 Bisa, kita dapat melakukan pengambilan data JSON dengan menggunakan sebuah variabel yang menyimpan sebuah dictionary berisi data. Pada hal ini biasanya melibatkan penggunaan `jsonDecode` dari `dart:convert` untuk mengubah data JSON menjadi struktur data Dart (seperti `Map` atau `List`). Akan tetapi, pengambilan data JSON tanpa membuat model terlebih dahulu tidak lebih baik dari membuat model terlebih dahulu karena hal ini membuat aplikasi lebih rentan terhadap kesalahan karena tidak adanya pemeriksaan tipe pada saat kompilasi, meningkatkan potensi kesalahan runtime dan kurang tersturktur sehingga sulit untuk memastikan konsistensi data, terutama saat mengembangkan aplikasi.
 
+**Fungsi dari CookieRequest dan jelaskan mengapa instance CookieRequest perlu untuk dibagikan ke semua komponen di aplikasi Flutter.**
+`CookieRequest` dari library `pbp_django_auth` berfungsi sebagai:  
+- Penyedia fungsi untuk sesi, login, dan logout.
+- Mengirimkan HTTP request dengan metode GET dan POST.
+- Cookies berupa informasi sesi pengguna yang disimpan secara lokal.
+
+`CookieRequest` perlu dibagikan ke semua komponen di aplikasi Flutter agar sesi (cookies) konsisten dalam semua komponen aplikasi Flutter. Jadi, jika sesi/cookies diubah dalam suatu komponen atau aplikasi, maka sesi tersebut tidak menandakan sesi user tersebut yang sedang login.
+
+**Jelaskan mekanisme pengambilan data dari JSON hingga dapat ditampilkan pada Flutter.**
+*   Membuat model dalam Flutter dengan memasukan data JSON ke website [Quicktype](https://app.quicktype.io/)
+*   Menambahkan ddependensi http
+    - Menjalankan command `flutter pub add http`
+    - Menambahkan kode `<uses-permission android:name="android.permission.INTERNET" />` pada file `android/app/src/main/AndroidManifest.xml`
+*   Import model yang sudah dibuat dalam file yang mau menampilkan data
+*   Membuat fungsi untuk fetch data
+    ```ruby
+    Future<List<Item>> fetchProduct() async {
+        var url = Uri.parse(
+            'http://127.0.0.1:8000/json/');
+        var response = await http.get(
+            url,
+            headers: {"Content-Type": "application/json"},
+        );
+
+        var data = jsonDecode(utf8.decode(response.bodyBytes));
+
+        ...
+        return list_item;
+    }
+    ```
+*   Ubah response yang diberikan menjadi class dalam model yang telah dibuat
+    ```ruby
+    List<Item> list_item = [];
+        for (var d in data) {
+            if (d != null) {
+                list_item.add(Item.fromJson(d));
+            }
+    }
+    ```
+*   Pada body dari widget `Scaffold` gunakan `FutureBuilder` untuk menggunakan function `fetchProduct()`
+    ```ruby
+    body: FutureBuilder(
+        future: fetchProduct(),
+       ...         
+    );    
+    ```
+*   Hasil dari `fetchProduct()` ditampilkan dalam bentuk `AsyncSnapshot`
+    ```ruby
+     builder: (context, AsyncSnapshot snapshot) {
+            ...
+            return ListView.builder(
+                itemCount: snapshot.data!.length,
+                itemBuilder: (_, index) => Container(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                            Text(
+                            "${snapshot.data![index].fields.name}",
+                            style: const TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                            ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text("${snapshot.data![index].fields.amount}"),
+                            const SizedBox(height: 10),
+                            Text(
+                                "${snapshot.data![index].fields.description}")
+                        ],
+                        ),
+                    ));
+            }
+    ```
+
+**Jelaskan mekanisme autentikasi dari input data akun pada Flutter ke Django hingga selesainya proses autentikasi oleh Django dan tampilnya menu pada Flutter.**
+*   Meminta input username dan password dari user
+    ```ruby
+    final response = await request.login("http://127.0.0.1:8000/auth/login/", {
+                                'username': username,
+                                'password': password,
+    });
+    ```
+*   Pada function login yang terdapat pada django, ambil `username` dan `password`, dan gunakan `user = authenticate(username=username, password=password)` untuk mendapatkan `user`
+*   Jika berhasil mereturn user, program akan menjalankan `auth_login(request, user)` untuk mengauntentikasi login user
+    ```ruby
+    if user is not None:
+        if user.is_active:
+            auth_login(request, user)
+            # Status login sukses.
+            return JsonResponse({
+                ...
+                # Tambahkan data lainnya jika ingin mengirim data ke Flutter.
+            }, status=200)
+        else:
+            return JsonResponse({
+                ...
+            }, status=401)
+    ```
+*   Pada Flutter, setelah mendapatkan request, jika `request.loggedIn` bernilai true, maka akan dialihkan ke halaman `HomePage`
+
+**Sebutkan seluruh widget yang kamu pakai pada tugas ini dan jelaskan fungsinya masing-masing.**
+*   TextField: Widget yang digunakan untuk menerima input teks dari user.
+*   FutureBuilder: Widget yang digunakan untuk membangun widget secara asinkron
+*   ListView.builder: WIdget untuk membuat daftar yang dapat discroll
+*   Center: Widget untuk menampilkan komponen di tengah layar
+*   Column: Menyusun komponen secara vertikal
+
+**Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step!**
+
 </details>
 
 <details>

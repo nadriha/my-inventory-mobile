@@ -9,9 +9,9 @@ class MyHomePage extends StatelessWidget {
   MyHomePage({Key? key}) : super(key: key);
 
   final List<InventoryItem> items = [
-    InventoryItem("Lihat Item", Icons.checklist, Colors.lightGreen.shade900),
-    InventoryItem("Tambah Item", Icons.add_shopping_cart, Colors.lightGreen.shade800),
-    InventoryItem("Logout", Icons.logout, Colors.lightGreen.shade700),
+    InventoryItem("Lihat Item", Icons.checklist, Colors.lightGreen.shade900, 1),
+    InventoryItem("Tambah Item", Icons.add_shopping_cart, Colors.lightGreen.shade800, 2),
+    InventoryItem("Logout", Icons.logout, Colors.lightGreen.shade700, 3),
   ];
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
