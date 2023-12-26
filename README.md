@@ -117,6 +117,198 @@ Bisa, kita dapat melakukan pengambilan data JSON dengan menggunakan sebuah varia
 *   Column: Menyusun komponen secara vertikal
 
 **Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step!**
+*   Membuat halaman login pada proyek tugas Flutter.
+    -   Membuat aplikasi `authentication` dan menginstall library `corsheaders`
+    -   Membuat path untuk `login` pada Django, dengan function `login` pada `views.py` yang berisi:
+        ```ruby
+        @csrf_exempt
+        def login(request):
+            username = request.POST['username']
+            password = request.POST['password']
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                if user.is_active:
+                    auth_login(request, user)
+                    # Status login sukses.
+                    return JsonResponse({
+                        "username": user.username,
+                        "status": True,
+                        "message": "Login sukses!"
+                        # Tambahkan data lainnya jika ingin mengirim data ke Flutter.
+                    }, status=200)
+                else:
+                    return JsonResponse({
+                        "status": False,
+                        "message": "Login gagal, akun dinonaktifkan."
+                    }, status=401)
+
+            else:
+                return JsonResponse({
+                    "status": False,
+                    "message": "Login gagal, periksa kembali email atau kata sandi."
+                }, status=401)
+        ```
+    -   Pada Flutter, authentikasi menggunakan `CookieRequest` pada library `pbp_django_auth` yang diinisiasi pada root widget menggunakan      `Provider`
+        ```ruby
+        Widget build(BuildContext context) {
+            return Provider(
+            create: (_) {
+                        CookieRequest request = CookieRequest();
+                        return request;
+            },
+            child: MaterialApp(
+                ...
+            )
+            );
+        }
+        ```
+    -   Membuat file `login.dart` pada `lib/screens`
+*   Mengintegrasikan sistem autentikasi Django dengan proyek tugas Flutter.
+    -   Pada `login.dart`, login page diintegrasikan dengan Django melalui request yang diberikan oleh Flutter ke Django
+        ```ruby
+        class _LoginPageState extends State<LoginPage> {
+           ...
+            @override
+            Widget build(BuildContext context) {
+                final request = context.watch<CookieRequest>();
+                return Scaffold(
+                    ...
+                    ElevatedButton(
+                        onPressed: () async {
+                            String username = _usernameController.text;
+                            String password = _passwordController.text;
+
+                            final response = await request.login("http://127.0.0.1:8000/auth/login/", {
+                            'username': username,
+                            'password': password,
+                            });
+                
+                            if (request.loggedIn) {
+                                ...
+                                } else {
+                                ...
+                            }
+                        },
+                        child: const Text('Login'),
+                    ),                            
+                ),
+            }
+        }
+        ```
+*   Membuat model kustom sesuai dengan proyek aplikasi Django.
+    -   Menyediakan url path yang mengembalikan response berupa data JSON. `http://127.0.0.1:8000/get-product/`
+    -   Mengubah data JSON yang didapat menjadi bentuk class pada dart dengan menggunakan [Quicktype](https://app.quicktype.io/)
+    -   Membuat `item.dart` pada `lib/models` dan memasukan kode dari web [Quicktype](https://app.quicktype.io/)
+
+*   Membuat halaman yang berisi daftar semua item yang terdapat pada endpoint JSON di Django yang telah kamu deploy.
+    -   Membuat file baru pada `lib/screens` bernama `list_item.dart`
+    -   Buat function `fetchProduct` untuk mengubah response JSON dari url, ke dalam models yang sudah dibuat
+        ```ruby
+        Future<List<Item>> fetchProduct(request) async {
+            var url = 'http://127.0.0.1:8000/get-product/';
+            var response = await request.get(url);
+            List<Item> list_item = [];
+            for (var d in response) {
+            if (d != null) {
+                list_item.add(Item.fromJson(d));
+            }
+            }
+            return list_item;
+        }
+        ```
+    -   Pada build widget, gunakan `FutureBuilder` untuk menampilkan data dari function `fetchProduct`    
+        ```ruby
+        Widget build(BuildContext context) {
+            final request = context.watch<CookieRequest>();
+            return Scaffold(
+                ...
+                body: FutureBuilder(
+                    future: fetchProduct(request),
+                    builder: (context, AsyncSnapshot snapshot) {
+                    ...
+                        return ListView.builder(
+                            itemCount: snapshot.data!.length,
+                            ...
+                                child: InkWell(
+                                    child: Column(
+                                    children: [
+                                        Text(
+                                        "${snapshot.data![index].fields.name}", //menampilkan nama
+                                        style: const TextStyle(
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold,
+                                        ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Text("${snapshot.data![index].fields.amount}"), //menampilkan amount
+                                        const SizedBox(height: 10),
+                                        Text(
+                                            "${snapshot.data![index].fields.description}") //menampilkan description
+                                    ],
+                                    ),
+                                )
+                        )
+        }));}
+        ```
+*   Membuat halaman detail untuk setiap item yang terdapat pada halaman daftar Item.
+    -   Membuat `detail_item.dart`
+    -   Pada build widget `list_item.dart`, gunakan widget `InkWell` untuk child dalam container agar bisa di tap dan di navigate ke `DetailItemPage`
+        ```ruby
+        itemBuilder: (_, index) => Container(
+            margin: const EdgeInsets.symmetric(
+                horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.all(20.0),
+            child: InkWell(
+            onTap: () {
+                Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DetailItemPage(
+                            name:
+                                snapshot.data![index].fields.name,
+                            amount: snapshot
+                                .data![index].fields.amount,
+                            description: snapshot
+                                .data![index].fields.description,
+                        )),
+                );
+            },
+        ```
+    -   Pada `DetailItemPage`, tiap item ditampilkan berdasarkan variable yang di pass
+        ```ruby
+        const DetailItemPage({Key? key, required this.name, required this.amount, required this.description}) : super(key: key);
+
+        @override
+        Widget build(BuildContext context) {
+            return Scaffold(
+            appBar: AppBar(
+                title: Text('Item Details'),
+            ),
+            body: Padding(
+                ...
+                children: <Widget>[
+                    Text(
+                    'Name: $name',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                    'Amount: $amount',
+                    style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                    'Description: $description',
+                    style: TextStyle(fontSize: 16),
+                    ),
+                ],
+                ),
+            );
+        }
+        ```
+        
+
+
 
 </details>
 
