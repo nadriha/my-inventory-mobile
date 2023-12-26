@@ -5,7 +5,7 @@
 **Apakah bisa kita melakukan pengambilan data JSON tanpa membuat model terlebih dahulu? Jika iya, apakah hal tersebut lebih baik daripada membuat model sebelum melakukan pengambilan data JSON?**  
 Bisa, kita dapat melakukan pengambilan data JSON dengan menggunakan sebuah variabel yang menyimpan sebuah dictionary berisi data. Pada hal ini biasanya melibatkan penggunaan `jsonDecode` dari `dart:convert` untuk mengubah data JSON menjadi struktur data Dart (seperti `Map` atau `List`). Akan tetapi, pengambilan data JSON tanpa membuat model terlebih dahulu tidak lebih baik dari membuat model terlebih dahulu karena hal ini membuat aplikasi lebih rentan terhadap kesalahan karena tidak adanya pemeriksaan tipe pada saat kompilasi, meningkatkan potensi kesalahan runtime dan kurang tersturktur sehingga sulit untuk memastikan konsistensi data, terutama saat mengembangkan aplikasi.
 
-**Fungsi dari CookieRequest dan jelaskan mengapa instance CookieRequest perlu untuk dibagikan ke semua komponen di aplikasi Flutter.**
+**Fungsi dari CookieRequest dan jelaskan mengapa instance CookieRequest perlu untuk dibagikan ke semua komponen di aplikasi Flutter.**  
 `CookieRequest` dari library `pbp_django_auth` berfungsi sebagai:  
 - Penyedia fungsi untuk sesi, login, dan logout.
 - Mengirimkan HTTP request dengan metode GET dan POST.
